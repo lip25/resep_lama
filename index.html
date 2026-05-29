@@ -1,162 +1,151 @@
-update program ini 
+from pathlib import Path
 
-<!DOCTYPE html>
-<html>
+html = """<!DOCTYPE html>
+<html lang="id">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Botela Recipe</title>
-
+<title>BOTELA Finance Simple</title>
 <style>
-body{
-    font-family: Arial;
-    background:#0f172a;
-    color:white;
-    text-align:center;
-    padding:20px;
-}
-
-h1{
-    color:#22c55e;
-}
-
-input{
-    width:80%;
-    padding:14px;
-    font-size:18px;
-    border-radius:10px;
-    border:none;
-    margin-top:10px;
-    text-align:center;
-    background:#1e293b;
-    color:white;
-}
-
-button{
-    width:90%;
-    padding:15px;
-    margin:10px;
-    font-size:18px;
-    border:none;
-    border-radius:12px;
-    background:#22c55e;
-    color:white;
-    font-weight:bold;
-}
-
-.result{
-    margin-top:20px;
-    padding:20px;
-    background:#1e293b;
-    border-radius:12px;
-    font-size:18px;
-    line-height:1.8;
-}
+body{font-family:Arial;background:#111827;color:white;padding:20px;margin:0}
+.card{background:#1f2937;padding:15px;border-radius:12px;margin-bottom:15px}
+input{width:100%;padding:10px;margin:5px 0 15px;border:none;border-radius:8px;background:#374151;color:white}
+button{padding:10px 15px;border:none;border-radius:8px;font-weight:bold;cursor:pointer}
+.btn{background:#f59e0b;color:black}
+.del{background:#dc2626;color:white}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
+table{width:100%;border-collapse:collapse}
+th,td{border:1px solid #374151;padding:8px;text-align:center}
+h1{text-align:center}
+.result{font-size:24px;font-weight:bold}
 </style>
 </head>
-
 <body>
 
-<h1>BOTELA RECIPE</h1>
+<h1>BOTELA Finance</h1>
 
-<input type="number" id="botol" placeholder="Jumlah botol">
+<div class="card">
+<h3>Input Penjualan</h3>
 
-<br>
+<label>Americano (Rp12.000)</label>
+<input type="number" id="americano" value="0">
 
-<button onclick="hitung('americano')">☕ Americano</button>
-<button onclick="hitung('matcha')">🍵 Matcha</button>
-<button onclick="hitung('kopisusu')">🥛 Kopi Susu Gula Aren</button>
+<label>Kopi Susu Aren (Rp15.000)</label>
+<input type="number" id="kopsuren" value="0">
 
-<div class="result" id="hasil">
-Masukkan jumlah botol lalu pilih minuman
+<label>Matcha (Rp15.000)</label>
+<input type="number" id="matcha" value="0">
+
+<button class="btn" onclick="hitung()">Hitung & Simpan</button>
+</div>
+
+<div class="grid">
+<div class="card">
+<h3>💰 Uang Modal</h3>
+<div id="modal" class="result">Rp0</div>
+</div>
+
+<div class="card">
+<h3>💵 Uang Pribadi</h3>
+<div id="pribadi" class="result">Rp0</div>
+</div>
+</div>
+
+<div class="card">
+<h3>Riwayat</h3>
+<button class="del" onclick="hapusSemua()">Hapus Semua Riwayat</button>
+<br><br>
+
+<table>
+<thead>
+<tr>
+<th>Tanggal</th>
+<th>Uang Modal</th>
+<th>Uang Pribadi</th>
+<th>Aksi</th>
+</tr>
+</thead>
+<tbody id="riwayat"></tbody>
+</table>
 </div>
 
 <script>
+const harga={americano:12000,kopsuren:15000,matcha:15000};
+const hpp={americano:4520,kopsuren:8750,matcha:5987};
 
-function hitung(menu){
-
-    let botol = Number(document.getElementById("botol").value);
-
-    if(botol <= 0){
-        document.getElementById("hasil").innerHTML =
-        "Masukkan jumlah botol dulu!";
-        return;
-    }
-
-    let hasil = "";
-
-    // ==========================
-    // AMERICANO
-    // ==========================
-    if(menu === "americano"){
-
-        let kopi = botol * 3;
-        let air = botol * 250;
-
-        hasil = `
-        <h2>☕ Americano</h2>
-
-        Jumlah botol: ${botol}<br><br>
-
-        Kopi bubuk: ${kopi} gram<br>
-        Air panas: ${air} ml
-        `;
-    }
-
-    // ==========================
-    // MATCHA
-    // ==========================
-    if(menu === "matcha"){
-
-        let matcha = botol * 25;
-        let skm = botol * 4;
-        let susu = botol * 150;
-        let air = botol * 80;
-
-        hasil = `
-        <h2>🍵 Matcha</h2>
-
-        Jumlah botol: ${botol}<br><br>
-
-        Matcha: ${matcha} gram<br>
-        SKM: ${skm} ml<br>
-        Susu UHT: ${susu} ml<br>
-        Air panas: ${air} ml
-        `;
-    }
-
-    // ==========================
-    // KOPI SUSU GULA AREN
-    // RESEP NAGIH BOTELA
-    // ==========================
-    if(menu === "kopisusu"){
-
-        let kopi = botol * 4;
-        let air = botol * 70;
-        let susu = botol * 145;
-        let skm = botol * 5;
-        let creamer = botol * 3;
-        let gula = botol * 23;
-
-        hasil = `
-        <h2>🥛 Kopi Susu Gula Aren</h2>
-
-        Jumlah botol: ${botol}<br><br>
-
-        Kopi bubuk: ${kopi} gram<br>
-        Air panas: ${air} ml<br>
-        Susu UHT: ${susu} ml<br>
-        SKM: ${skm} ml<br>
-        Creamer: ${creamer} gram<br>
-        Gula aren: ${gula} gram<br><br>
-
-        ✨ Resep signature creamy balance
-        `;
-    }
-
-    document.getElementById("hasil").innerHTML = hasil;
+function rupiah(n){
+ return "Rp"+Math.round(n).toLocaleString("id-ID");
 }
 
+function hitung(){
+ let a=+document.getElementById("americano").value||0;
+ let k=+document.getElementById("kopsuren").value||0;
+ let m=+document.getElementById("matcha").value||0;
+
+ let omzet=(a*harga.americano)+(k*harga.kopsuren)+(m*harga.matcha);
+ let modalTerpakai=(a*hpp.americano)+(k*hpp.kopsuren)+(m*hpp.matcha);
+
+ let laba=omzet-modalTerpakai;
+
+ let uangPribadi=laba*0.30;
+ let uangModal=modalTerpakai+(laba*0.70);
+
+ document.getElementById("modal").innerText=rupiah(uangModal);
+ document.getElementById("pribadi").innerText=rupiah(uangPribadi);
+
+ let data=JSON.parse(localStorage.getItem("botelaData")||"[]");
+
+ data.unshift({
+   tanggal:new Date().toLocaleDateString("id-ID"),
+   modal:uangModal,
+   pribadi:uangPribadi
+ });
+
+ localStorage.setItem("botelaData",JSON.stringify(data));
+ tampilRiwayat();
+}
+
+function hapusData(index){
+ let data=JSON.parse(localStorage.getItem("botelaData")||"[]");
+
+ if(confirm("Hapus data ini?")){
+   data.splice(index,1);
+   localStorage.setItem("botelaData",JSON.stringify(data));
+   tampilRiwayat();
+ }
+}
+
+function hapusSemua(){
+ if(confirm("Yakin ingin menghapus semua riwayat?")){
+   localStorage.removeItem("botelaData");
+   tampilRiwayat();
+ }
+}
+
+function tampilRiwayat(){
+ let data=JSON.parse(localStorage.getItem("botelaData")||"[]");
+ let html="";
+
+ data.forEach((d,i)=>{
+ html+=`
+ <tr>
+   <td>${d.tanggal}</td>
+   <td>${rupiah(d.modal)}</td>
+   <td>${rupiah(d.pribadi)}</td>
+   <td><button class="del" onclick="hapusData(${i})">Hapus</button></td>
+ </tr>`;
+ });
+
+ document.getElementById("riwayat").innerHTML=html;
+}
+
+tampilRiwayat();
 </script>
 
 </body>
 </html>
+"""
+
+path="/mnt/data/BOTELA_Finance_v2.html"
+Path(path).write_text(html,encoding="utf-8")
+print(path)
